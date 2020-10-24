@@ -4,8 +4,17 @@ import (
 	"fmt"
 )
 
-func printGrid()
+func printGrid(tab [9][9]int) {
+	for i := 0; i <= 9; i++ {
+		fmt.Print("---------------------\n|")
+		for j := 0; j <= 9; j++ {
+			fmt.Print(tab[i][j], "|")
+		}
+		fmt.Print("\n")
+	}
+}
 func main() {
-	c := [5][5]uint8{}
-	fmt.Println(c)
+	grid := [9][9]int{}
+	printGrid(grid)
+
 }
