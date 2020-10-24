@@ -16,10 +16,6 @@ type Player struct {
 	position Position
 }
 
-func newPlayer(_name string, _power int, _attack int) *Player {
-	p := Player{name: _name, power: _power, position: Position{0, 0}}
-	return &p
-}
 func generateDamage() int {
 	return rand.Intn(50-10+1) + 10
 }
@@ -42,11 +38,61 @@ func (p *Player) movePlayerHorizontal(pos int) {
 func (p *Player) movePlayerVertical(pos int) {
 	switch {
 	case pos < 0:
-		p.position.y--
-	case pos > 0:
 		p.position.y++
+	case pos > 0:
+		p.position.y--
 	default:
 
+	}
+}
+func (p *Player) askPlayerMove() {
+	fmt.Print(p.name, " peut bouger ")
+
+	if p.position.x > 0 {
+		fmt.Print(" à gauche,")
+	} else if p.position.x < 8 {
+		fmt.Print(" à droite,")
+	}
+	if p.position.y > 0 {
+		fmt.Print(" en haut,")
+	} else if p.position.y < 4 {
+		fmt.Print(" en bas,")
+	}
+
+	fmt.Println("\n\nPour bouger de haut en bas taper V\nPour bouger de droite a gauche taper H\n-> ")
+	side := ""
+	var choice int
+	fmt.Scan(&side)
+
+	switch {
+	case side == "V":
+		fmt.Print("Pour monter taper 1, pour descendre taper -1\n-> ")
+		fmt.Scan(&choice)
+		p.movePlayerVertical(choice)
+	case side == "H":
+		fmt.Print("Pour bouger a gauche taper -1, pour bouger a droite taper 1\n-> ")
+		fmt.Scan(&choice)
+		p.movePlayerHorizontal(choice)
+	}
+}
+func printGrid(tab [5][9]string) {
+
+	print("   ")
+	for i := 65; i < (65 + 9); i++ {
+		fmt.Printf("%c|", i)
+	}
+	print("\n")
+	for i := 0; i < 5; i++ {
+		fmt.Print("---------------------\n")
+		fmt.Print(i+1, "|")
+		for j := 0; j < 9; j++ {
+			if tab[i][j] != "" {
+				fmt.Print(tab[i][j], "|")
+			} else {
+				fmt.Print(" |")
+			}
+		}
+		fmt.Print("\n")
 	}
 }
 func main() {
@@ -56,28 +102,33 @@ func main() {
 
 	var name1, name2 string
 	fmt.Print("Entrez le nom du premier joueur et du deuxième joueur -> ")
-	fmt.Scanf("%s %s", &name1, &name2)
+	fmt.Scan(&name1)
+	fmt.Print("Entrez le nom du deuxième joueur -> ")
+	fmt.Scan(&name2)
 
-	p1 := Player{name: name1, power: 100}
-	p2 := Player{name: name2, power: 100}
+	p1 := Player{name: name1, power: 100, position: Position{0, 0}}
+	p2 := Player{name: name2, power: 100, position: Position{4, 8}}
+
+	grid := [5][9]string{}
+	grid[p1.position.x][p1.position.y] = "X"
+
+	grid[p2.position.x][p2.position.y] = "O"
 	tour := 1
 	for p1.power > 0 && p2.power > 0 {
+		grid[p1.position.x][p1.position.y] = "X"
+		grid[p2.position.x][p2.position.y] = "O"
+		printGrid(grid)
 		fmt.Println("\nTour ", tour)
 		fmt.Println("Vie ", p1.name, " = ", p1.power)
 		fmt.Println("Vie ", p2.name, " = ", p2.power)
 		switch {
-		case tour%2 == 0:
-			p1.attackPlayer(&p2)
+		case tour%2 != 0:
+			p1.askPlayerMove()
 		default:
-			p2.attackPlayer(&p1)
+			p2.askPlayerMove()
+			tour++
 		}
-		// fmt.Println("Position de ", p1.position)
-		// fmt.Print("mouve a gauche")
-		// p1.movePlayerVertical(-1)
-		// fmt.Println("Position de ", p1.position)
-		// p1.movePlayerVertical(1)
-		// fmt.Println("Position de ", p1.position)
-		tour++
+
 	}
 	fmt.Println("************************")
 	fmt.Println("Vie ", p1.name, " = ", p1.power)
