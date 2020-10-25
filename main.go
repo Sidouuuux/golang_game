@@ -59,20 +59,20 @@ func (p *Player) askPlayerMove() {
 		fmt.Print(" en bas,")
 	}
 
-	fmt.Println("\n\nPour bouger de haut en bas taper V\nPour bouger de droite a gauche taper H\n-> ")
+	fmt.Print("\n\nPour bouger de haut en bas taper V\nPour bouger de droite a gauche taper H\n-> ")
 	side := ""
 	var choice int
 	fmt.Scan(&side)
 
 	switch {
-	case side == "V":
-		fmt.Print("Pour monter taper 1, pour descendre taper -1\n-> ")
-		fmt.Scan(&choice)
-		p.movePlayerVertical(choice)
 	case side == "H":
-		fmt.Print("Pour bouger a gauche taper -1, pour bouger a droite taper 1\n-> ")
+		fmt.Print("Pour bouger a gauche taper -1, pour bouger a droite taper 1 -> ")
 		fmt.Scan(&choice)
 		p.movePlayerHorizontal(choice)
+	case side == "V":
+		fmt.Print("Pour monter taper 1, pour descendre taper -1 -> ")
+		fmt.Scan(&choice)
+		p.movePlayerVertical(choice)
 	}
 }
 func printGrid(tab [5][9]string) {
@@ -110,9 +110,6 @@ func main() {
 	p2 := Player{name: name2, power: 100, position: Position{4, 8}}
 
 	grid := [5][9]string{}
-	grid[p1.position.x][p1.position.y] = "X"
-
-	grid[p2.position.x][p2.position.y] = "O"
 	tour := 1
 	for p1.power > 0 && p2.power > 0 {
 		grid[p1.position.x][p1.position.y] = "X"
@@ -127,6 +124,9 @@ func main() {
 		default:
 			p2.askPlayerMove()
 			tour++
+
+			grid[p1.position.x][p1.position.y] = ""
+			grid[p2.position.x][p2.position.y] = ""
 		}
 
 	}
@@ -134,8 +134,8 @@ func main() {
 	fmt.Println("Vie ", p1.name, " = ", p1.power)
 	fmt.Println("Vie ", p2.name, " = ", p2.power)
 	if p1.power <= 0 {
-		fmt.Println("Le joueur ", p2.name, " a gangé")
+		fmt.Println("Le joueur ", p2.name, " a gagné")
 	} else {
-		fmt.Println("Le joueur ", p1.name, " a gangé")
+		fmt.Println("Le joueur ", p1.name, " a gagné")
 	}
 }
