@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -25,54 +26,54 @@ func (p *Player) attackPlayer(p2 *Player) {
 
 	fmt.Println(p2.name, " attaque ", p.name, " de ", attack)
 }
-func (p *Player) movePlayerHorizontal(pos int) {
-	switch {
-	case pos < 0:
-		p.position.x--
-	case pos > 0:
-		p.position.x++
-	default:
-
+func (p *Player) verify_move(_key string, _possible_move string) bool {
+	if !(strings.Contains(_possible_move, _key)) {
+		return false
 	}
+	p.movePlayer(_key)
+	return true
 }
-func (p *Player) movePlayerVertical(pos int) {
-	switch {
-	case pos < 0:
-		p.position.y++
-	case pos > 0:
-		p.position.y--
-	default:
 
+func (p *Player) movePlayer(_key string) {
+	switch {
+	case _key == "Z":
+		p.position.y -= 1
+	case _key == "S":
+		p.position.y += 1
+	case _key == "Q":
+		p.position.x -= 1
+	case _key == "D":
+		p.position.x += 1
 	}
+	fmt.Printf("\n---Position de %s : %i, %i ---", p.name, p.position.x, p.position.y)
 }
+
 func (p *Player) askPlayerMove() {
-	fmt.Print(p.name, " peut bouger ")
-
+	fmt.Print(p.name, " peut bouger")
+	key := ""
+	possible_move := ""
 	if p.position.x > 0 {
-		fmt.Print(" à gauche,")
+		fmt.Print(" à gauche")
+		possible_move += "Q"
 	} else if p.position.x < 8 {
-		fmt.Print(" à droite,")
+		fmt.Print(" à droite ")
+		possible_move += "D"
 	}
 	if p.position.y > 0 {
-		fmt.Print(" en haut,")
+		fmt.Print(" en haut")
+		possible_move += "Z"
 	} else if p.position.y < 4 {
-		fmt.Print(" en bas,")
+		fmt.Print(" en bas")
+		possible_move += "S"
 	}
 
-	fmt.Print("\n\nPour bouger de haut en bas taper V\nPour bouger de droite a gauche taper H\n-> ")
-	side := ""
-	var choice int
-	fmt.Scan(&side)
+	fmt.Print("\n\nPour bouger appuyer sur Z, Q, S, D -> ")
+	fmt.Scan(&key)
 
-	switch {
-	case side == "H":
-		fmt.Print("Pour bouger a gauche taper -1, pour bouger a droite taper 1 -> ")
-		fmt.Scan(&choice)
-		p.movePlayerHorizontal(choice)
-	case side == "V":
-		fmt.Print("Pour monter taper 1, pour descendre taper -1 -> ")
-		fmt.Scan(&choice)
-		p.movePlayerVertical(choice)
+	can_move := false
+	can_move = p.verify_move(key, possible_move)
+	if can_move != true {
+		fmt.Println("can't move")
 	}
 }
 func printGrid(tab [5][9]string) {
@@ -109,9 +110,9 @@ func main() {
 	p1 := Player{name: name1, power: 100, position: Position{0, 0}}
 	p2 := Player{name: name2, power: 100, position: Position{4, 8}}
 
-	grid := [5][9]string{}
 	tour := 1
-	for p1.power > 0 && p2.power > 0 {
+	for {
+		grid := [5][9]string{}
 		grid[p1.position.x][p1.position.y] = "X"
 		grid[p2.position.x][p2.position.y] = "O"
 		printGrid(grid)
@@ -128,7 +129,7 @@ func main() {
 			grid[p1.position.x][p1.position.y] = ""
 			grid[p2.position.x][p2.position.y] = ""
 		}
-
+		tour++
 	}
 	fmt.Println("************************")
 	fmt.Println("Vie ", p1.name, " = ", p1.power)
