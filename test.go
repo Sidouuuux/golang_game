@@ -16,7 +16,6 @@ type Player struct {
 }
 
 func printGrid(tab [5][9]string) {
-
 	print("   ")
 	for i := 65; i < (65 + 9); i++ {
 		fmt.Printf("%c|", i)
@@ -46,32 +45,33 @@ func (p *Player) verify_move(_key string, _possible_move string) bool {
 func (p *Player) movePlayer(_key string) {
 	switch {
 	case _key == "Z":
-		p.position.x -= 1
-	case _key == "S":
-		p.position.x += 1
-	case _key == "Q":
 		p.position.y -= 1
-	case _key == "D":
+	case _key == "S":
 		p.position.y += 1
+	case _key == "Q":
+		p.position.x -= 1
+	case _key == "D":
+		p.position.x += 1
 	}
-	fmt.Printf("\n---Position de %s : %d/%d ---\n", p.name, p.position.x, p.position.y)
 }
 
 func (p *Player) askPlayerMove() {
 	fmt.Print(p.name, " peut bouger")
 	key := ""
 	possible_move := ""
-	if p.position.x > 0 {
+	if p.position.x >= 1 {
 		fmt.Print(" à gauche")
 		possible_move += "Q"
-	} else if p.position.x < 8 {
-		fmt.Print(" à droite ")
+	}
+	if p.position.x < 8 {
+		fmt.Print(" à droite")
 		possible_move += "D"
 	}
-	if p.position.y > 0 {
+	if p.position.y >= 1 {
 		fmt.Print(" en haut")
 		possible_move += "Z"
-	} else if p.position.y < 4 {
+	}
+	if p.position.y < 4 {
 		fmt.Print(" en bas")
 		possible_move += "S"
 	}
@@ -89,11 +89,12 @@ func (p *Player) askPlayerMove() {
 
 func main() {
 
-	p1 := Player{name: "oui", power: 100, position: Position{0, 0}}
+	p1 := Player{name: "oui", power: 100, position: Position{8, 4}}
 
 	for {
 		grid := [5][9]string{}
-		grid[p1.position.x][p1.position.y] = "X"
+		grid[p1.position.y][p1.position.x] = "X"
+		fmt.Printf("\n---Position de %s : %d/%d ---\n", p1.name, p1.position.x, p1.position.y)
 		printGrid(grid)
 		p1.askPlayerMove()
 	}
