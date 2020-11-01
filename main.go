@@ -30,6 +30,7 @@ func (p *Player) verify_move(_key string, _possible_move string) bool {
 	if !(strings.Contains(_possible_move, _key)) {
 		return false
 	}
+	fmt.Println("move validé")
 	p.movePlayer(_key)
 	return true
 }
@@ -45,6 +46,7 @@ func (p *Player) movePlayer(_key string) {
 	case _key == "D":
 		p.position.x += 1
 	}
+	fmt.Println("move fait")
 }
 
 func (p *Player) askPlayerMove() {
@@ -111,29 +113,26 @@ func main() {
 
 	p1 := Player{name: name1, power: 100, position: Position{0, 0}}
 	p2 := Player{name: name2, power: 100, position: Position{8, 4}}
-
+	fmt.Println()
 	tour := 1
 	for {
 		grid := [5][9]string{}
 		grid[p1.position.y][p1.position.x] = "X"
 		grid[p2.position.y][p2.position.x] = "O"
+		fmt.Println("\nTour \n", tour" :\n")
 		printGrid(grid)
-		fmt.Println("\nTour ", tour)
-		fmt.Println("Vie ", p1.name, " = ", p1.power)
-		fmt.Println("Vie ", p2.name, " = ", p2.power)
+		// fmt.Println("Vie ", p1.name, " = ", p1.power)
+		// fmt.Println("Vie ", p2.name, " = ", p2.power)
 		switch {
 		case tour%2 != 0:
+			fmt.Printf("\n---Position de %s avant : %d/%d ---\n", p2.name, p2.position.x, p2.position.y)
 			p1.askPlayerMove()
-			fmt.Printf("\n---Position de %s : %d/%d ---\n", p1.name, p1.position.x, p1.position.y)
+			fmt.Printf("\n---Position de %s apres : %d/%d ---\n", p2.name, p2.position.x, p2.position.y)
 
 		default:
+			fmt.Printf("\n---Position de %s avant : %d/%d ---\n", p2.name, p2.position.x, p2.position.y)
 			p2.askPlayerMove()
-			fmt.Printf("\n---Position de %s : %d/%d ---\n", p2.name, p2.position.x, p2.position.y)
-
-			tour++
-
-			grid[p1.position.x][p1.position.y] = ""
-			grid[p2.position.x][p2.position.y] = ""
+			fmt.Printf("\n---Position de %s apres : %d/%d ---\n", p2.name, p2.position.x, p2.position.y)
 		}
 		tour++
 	}
